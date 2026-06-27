@@ -3,7 +3,7 @@ Name: Taha Asmat
 File: homework2.js
 Date created: June 21st
 Last edited: June 26th
-Version: 1.3
+Version: 1.0
 Description: External JS for Houston Emergency Care HW2
 */
 
@@ -60,17 +60,17 @@ function validateForm() {
 
   const dobDate = getDobDate();
   if (!dobDate) {
-    alert('Please enter a valid Date of Birth (a real month, day, and year).');
+    alert('Enter a real month, day, and year for your Date of Birth.');
     return false;
   }
   const today = new Date();
   if (dobDate > today) {
-    alert('Date of Birth cannot be in the future.');
+    alert("Date of Birth can't be in the future.");
     return false;
   }
   const oldestAllowed = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
   if (dobDate < oldestAllowed) {
-    alert('Date of Birth cannot be more than 120 years ago.');
+    alert('That birth year is more than 120 years ago - please double check it.');
     return false;
   }
   const dobMonthNum = dobDate.getMonth() + 1;
@@ -81,13 +81,13 @@ function validateForm() {
 
   const symptoms = document.getElementById('symptoms').value;
   if (symptoms.indexOf('"') !== -1) {
-    alert('Please remove double quote characters from the symptoms description.');
+    alert('No double quotes allowed in the symptoms box.');
     return false;
   }
 
   const checkedConditions = document.querySelectorAll('input[name="conditions"]:checked');
   if (checkedConditions.length === 0) {
-    alert('Please select at least one item under "Check all that apply."');
+    alert('Check at least one box under "Check all that apply."');
     return false;
   }
 
@@ -98,23 +98,23 @@ function validateForm() {
   const lname = document.getElementById('lname').value;
 
   if (pword.indexOf('"') !== -1 || pword.indexOf("'") !== -1) {
-    alert('Passwords cannot contain quote characters.');
+    alert('No quote characters allowed in your password.');
     return false;
   }
 
   if (userid && pword.toLowerCase().indexOf(userid.toLowerCase()) !== -1) {
-    alert('Password cannot contain your User ID.');
+    alert("Your password can't contain your User ID.");
     return false;
   }
 
   if ((fname && pword.toLowerCase().indexOf(fname.toLowerCase()) !== -1) ||
       (lname && pword.toLowerCase().indexOf(lname.toLowerCase()) !== -1)) {
-    alert('Password cannot contain your first or last name.');
+    alert("Your password can't contain your first or last name.");
     return false;
   }
 
   if (pword !== pword2) {
-    alert('Passwords do not match. Please re-enter them.');
+    alert("Those passwords don't match - try again.");
     return false;
   }
 
