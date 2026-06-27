@@ -3,43 +3,31 @@ Name: Taha Asmat
 File: homework2.js
 Date created: June 21st
 Last edited: June 26th
-Version: 1.1
-Description: JS for Houston Emergency Care HW2
+Version: 1.3
+Description: External JS for Houston Emergency Care HW2
 */
 
 function formatMoney(value) {
   return '$' + Number(value).toFixed(0);
 }
 
-function pad2(n) {
-  if (n < 10) {
-    return '0' + n;
-  }
-  return '' + n;
-}
-
 const healthLevel = document.getElementById('healthLevel');
 const healthLevelValue = document.getElementById('healthLevelValue');
-if (healthLevel && healthLevelValue) {
-  healthLevel.addEventListener('input', function () {
-    healthLevelValue.textContent = this.value;
-  });
-}
+healthLevel.addEventListener('input', function () {
+  healthLevelValue.textContent = this.value;
+});
 
 const salaryInput = document.getElementById('salary');
 const salaryDisplay = document.getElementById('salaryDisplay');
-if (salaryInput && salaryDisplay) {
-  salaryInput.addEventListener('input', function () {
-    salaryDisplay.textContent = formatMoney(this.value);
-  });
-}
+salaryInput.addEventListener('input', function () {
+  salaryDisplay.textContent = formatMoney(this.value);
+});
 
 const homeMin = document.getElementById('homeMin');
 const homeMax = document.getElementById('homeMax');
 const homeDisplay = document.getElementById('homePriceDisplay');
 
 function updateHomeRange() {
-  if (!homeMin || !homeMax || !homeDisplay) return;
   const minVal = Number(homeMin.value);
   const maxVal = Number(homeMax.value);
   let text = formatMoney(minVal) + ' - ' + formatMoney(maxVal);
@@ -49,11 +37,9 @@ function updateHomeRange() {
   homeDisplay.textContent = text;
 }
 
-if (homeMin && homeMax && homeDisplay) {
-  homeMin.addEventListener('input', updateHomeRange);
-  homeMax.addEventListener('input', updateHomeRange);
-  updateHomeRange();
-}
+homeMin.addEventListener('input', updateHomeRange);
+homeMax.addEventListener('input', updateHomeRange);
+updateHomeRange();
 
 function getDobDate() {
   const month = parseInt(document.getElementById('dobMonth').value, 10);
@@ -87,8 +73,11 @@ function validateForm() {
     alert('Date of Birth cannot be more than 120 years ago.');
     return false;
   }
-  document.getElementById('dob').value =
-    pad2(dobDate.getMonth() + 1) + '/' + pad2(dobDate.getDate()) + '/' + dobDate.getFullYear();
+  const dobMonthNum = dobDate.getMonth() + 1;
+  const dobDayNum = dobDate.getDate();
+  const dobMonthStr = dobMonthNum < 10 ? '0' + dobMonthNum : '' + dobMonthNum;
+  const dobDayStr = dobDayNum < 10 ? '0' + dobDayNum : '' + dobDayNum;
+  document.getElementById('dob').value = dobMonthStr + '/' + dobDayStr + '/' + dobDate.getFullYear();
 
   const symptoms = document.getElementById('symptoms').value;
   if (symptoms.indexOf('"') !== -1) {
@@ -133,13 +122,11 @@ function validateForm() {
 }
 
 const regForm = document.getElementById('regForm');
-if (regForm) {
-  regForm.addEventListener('submit', function (event) {
-    if (!validateForm()) {
-      event.preventDefault();
-    }
-  });
-}
+regForm.addEventListener('submit', function (event) {
+  if (!validateForm()) {
+    event.preventDefault();
+  }
+});
 
 function buildReview() {
   const f = document.regForm;
@@ -165,22 +152,30 @@ function buildReview() {
   const symptoms = f.symptoms.value;
 
   let gender = '(not selected)';
-  for (const r of f.gender) {
-    if (r.checked) gender = r.value;
+  for (let i = 0; i < f.gender.length; i++) {
+    if (f.gender[i].checked) {
+      gender = f.gender[i].value;
+    }
   }
 
   const allConditions = ['ChickenPox', 'Measles', 'Covid19', 'SmallPox', 'Tetanus'];
   const checked = document.querySelectorAll('input[name="conditions"]:checked');
   const checkedValues = [];
-  checked.forEach((c) => checkedValues.push(c.value));
+  for (let i = 0; i < checked.length; i++) {
+    checkedValues.push(checked[i].value);
+  }
 
   let vaccinated = '(not selected)';
-  for (const r of f.vaccinated) {
-    if (r.checked) vaccinated = r.value;
+  for (let i = 0; i < f.vaccinated.length; i++) {
+    if (f.vaccinated[i].checked) {
+      vaccinated = f.vaccinated[i].value;
+    }
   }
   let insurance = '(not selected)';
-  for (const r of f.insurance_radio) {
-    if (r.checked) insurance = r.value;
+  for (let i = 0; i < f.insurance_radio.length; i++) {
+    if (f.insurance_radio[i].checked) {
+      insurance = f.insurance_radio[i].value;
+    }
   }
 
   const healthLevelVal = f.healthLevel.value;
@@ -191,37 +186,33 @@ function buildReview() {
 
   let html = '<h3>PLEASE REVIEW THIS INFORMATION</h3>';
   html += '<table class="form">';
-  html += row('First, MI, Last Name', fname + ' ' + middle + ' ' + lname, fname && lname ? 'pass' : 'ERROR: missing name');
-  html += row('Date of Birth', dobText, dobStatus);
-  html += row('Email address', email, email ? 'pass' : 'ERROR: missing email');
-  html += row('Phone number', phone, phone ? 'pass' : 'ERROR: missing phone');
-  html += row('Address', address + (address2 ? ', ' + address2 : '') + ', ' + city + ', ' + state + ' ' + zipShort,
-              (address && city && state && zipFull) ? 'pass' : 'ERROR: missing address info');
+  html += '<tr><th>First, MI, Last Name:</th><td>' + fname + ' ' + middle + ' ' + lname + '</td><td>' +
+    (fname && lname ? 'pass' : 'ERROR: missing name') + '</td></tr>';
+  html += '<tr><th>Date of Birth:</th><td>' + dobText + '</td><td>' + dobStatus + '</td></tr>';
+  html += '<tr><th>Email address:</th><td>' + email + '</td><td>' + (email ? 'pass' : 'ERROR: missing email') + '</td></tr>';
+  html += '<tr><th>Phone number:</th><td>' + phone + '</td><td>' + (phone ? 'pass' : 'ERROR: missing phone') + '</td></tr>';
+  html += '<tr><th>Address:</th><td>' + address + (address2 ? ', ' + address2 : '') + ', ' + city + ', ' + state + ' ' + zipShort +
+    '</td><td>' + ((address && city && state && zipFull) ? 'pass' : 'ERROR: missing address info') + '</td></tr>';
   html += '</table>';
 
   html += '<h3>REQUESTED INFO</h3>';
   html += '<table class="form">';
-  allConditions.forEach((cond) => {
-    html += row(cond, checkedValues.indexOf(cond) !== -1 ? 'Y' : 'N', '');
-  });
-  html += row('Vaccinated?', vaccinated, '');
-  html += row('Insurance?', insurance, '');
-  html += row('Health Level', healthLevelVal + ' / 100', '');
-  html += row('Desired Salary', salaryVal, '');
-  html += row('Home Price Range', homePriceVal, '');
-  html += row('Described Symptoms', symptoms || '(none entered)', '');
-  html += row('User ID', userid, '');
-  html += row('Password', '********', '(not displayed for security)');
+  for (let i = 0; i < allConditions.length; i++) {
+    const cond = allConditions[i];
+    html += '<tr><th>' + cond + ':</th><td>' + (checkedValues.indexOf(cond) !== -1 ? 'Y' : 'N') + '</td><td></td></tr>';
+  }
+  html += '<tr><th>Vaccinated?:</th><td>' + vaccinated + '</td><td></td></tr>';
+  html += '<tr><th>Insurance?:</th><td>' + insurance + '</td><td></td></tr>';
+  html += '<tr><th>Health Level:</th><td>' + healthLevelVal + ' / 100</td><td></td></tr>';
+  html += '<tr><th>Desired Salary:</th><td>' + salaryVal + '</td><td></td></tr>';
+  html += '<tr><th>Home Price Range:</th><td>' + homePriceVal + '</td><td></td></tr>';
+  html += '<tr><th>Described Symptoms:</th><td>' + (symptoms || '(none entered)') + '</td><td></td></tr>';
+  html += '<tr><th>User ID:</th><td>' + userid + '</td><td></td></tr>';
+  html += '<tr><th>Password:</th><td>********</td><td>(not displayed for security)</td></tr>';
   html += '</table>';
 
   document.getElementById('reviewArea').innerHTML = html;
 }
 
-function row(label, value, status) {
-  return '<tr><th>' + label + ':</th><td>' + value + '</td><td>' + status + '</td></tr>';
-}
-
 const reviewBtn = document.getElementById('reviewBtn');
-if (reviewBtn) {
-  reviewBtn.addEventListener('click', buildReview);
-}
+reviewBtn.addEventListener('click', buildReview);
