@@ -1,0 +1,96 @@
+/* 
+ Name: Taha Asmat
+ File: patient_registration.css
+ Date Created: July 11th
+ Date Last Edited: July 11th
+ Version: 1.0
+ Purpose: Style sheet for MIS 3371 HW4
+ */
+body {
+  background-color: #eaf3fb;
+}
+div.form {
+  text-align: center;
+  background-color: #d6e9f8;
+  color: #003366;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-style: italic;
+  font-size: 20px;
+  margin: auto;
+  width: 70%;
+}
+table.form, td.form, th.form {
+  background-color: #d6e9f8;
+}
+.p6 {
+  color: #003366;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-style: italic;
+  font-size: 20px;
+}
+.p4 {
+  font-size: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: #2bd06d;
+}
+.centered {
+  text-align: center;
+}
+.form-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #eaf3fb;
+  border-radius: 10px;
+}
+table.form {
+  width: 100%;
+  margin-bottom: 15px;
+}
+table.form th,
+table.form td {
+  padding: 5px;
+  text-align: left;
+}
+.slider-box {
+  display: inline-block;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #d6e9f8;
+  border-radius: 5px;
+}
+footer {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #eaf3fb;
+  border-radius: 5px;
+  text-align: center;
+}
+.formBtn {
+  margin: 5px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid #003366;
+  background-color: #003366;
+  color: white;
+}
+.formBtn:hover {
+  background-color: #1a4d80;
+}
+.formBtn:disabled {
+  background-color: #9ba9b8;
+  border: 1px solid #9ba9b8;
+  cursor: not-allowed;
+}
+a {
+  color: #003366;
+}
+#today {
+  font-weight: bold;
+}
+.error {
+  color: red;
+  font-size: 0.8em;
+  display: block;
+  min-height: 1em;
+}
