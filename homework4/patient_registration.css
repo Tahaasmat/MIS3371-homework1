@@ -8,6 +8,7 @@
  */
 body {
   background-color: #eaf3fb;
+  margin: 0;
 }
 div.form {
   text-align: center;
@@ -93,4 +94,21 @@ a {
   font-size: 0.8em;
   display: block;
   min-height: 1em;
+}
+
+/* Sticky header: content protection requirement */
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #eaf3fb;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* iFrame section spacing */
+.iframe-section {
+  margin-top: 20px;
+  text-align: left;
 }
