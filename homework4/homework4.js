@@ -68,7 +68,7 @@ function formatSSN(el) {
   el.value = formatted;
 }
 
-/* ----- Cookie helper functions ----- */
+// Cookie helper functions
 
 function setCookie(name, value, days) {
   let expires = "";
@@ -97,7 +97,7 @@ function deleteCookie(name) {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
 
-/* ----- Greeting logic based on cookie ----- */
+// Greeting logic based on cookie
 
 function updateGreeting() {
   const greeting = document.getElementById('greeting');
@@ -137,7 +137,7 @@ document.getElementById('rememberMe').addEventListener('change', function () {
 
 window.addEventListener('load', updateGreeting);
 
-/* ----- Fetch API: load state dropdown options from external file ----- */
+// Fetch API: load state dropdown options from external file
 
 async function loadStateOptions() {
   const select = document.getElementById('state');
@@ -156,7 +156,7 @@ async function loadStateOptions() {
 
 window.addEventListener('load', loadStateOptions);
 
-/* ----- Local Storage: save and restore non-secure form fields ----- */
+// Local Storage: save and restore non-secure form fields
 
 const FORM_STORAGE_KEY = 'patientFormData';
 
@@ -343,7 +343,7 @@ function validateAddress() {
     return false;
   }
   if (v.length < 2 || v.length > 30) {
-    document.getElementById('addressError').innerHTML = '2-30 characters required.';
+    document.getElementById('addressError').innerHTML = 'Needs to be 2-30 characters.';
     return false;
   }
   document.getElementById('addressError').innerHTML = '';
@@ -358,7 +358,7 @@ function validateCity() {
     return false;
   }
   if (!re.test(v)) {
-    document.getElementById('cityError').innerHTML = '2-30 letters, spaces, or dashes.';
+    document.getElementById('cityError').innerHTML = 'Use 2-30 letters, spaces, or dashes.';
     return false;
   }
   document.getElementById('cityError').innerHTML = '';
@@ -393,7 +393,7 @@ function validateZip() {
 function validateSymptoms() {
   const v = document.getElementById('symptoms').value;
   if (v.indexOf('"') !== -1) {
-    document.getElementById('symptomsError').innerHTML = 'No double quotes allowed.';
+    document.getElementById('symptomsError').innerHTML = "Quotes aren't allowed here.";
     return false;
   }
   document.getElementById('symptomsError').innerHTML = '';
@@ -542,9 +542,7 @@ function resetErrors() {
 
 document.getElementById('submitBtn').disabled = true;
 
-function buildReview() {
-  const f = document.regForm;
-
+function buildContactSummary(f) {
   const fname = f.fname.value;
   const middle = f.middle.value;
   const lname = f.lname.value;
@@ -563,15 +561,21 @@ function buildReview() {
   const zipFull = f.zip.value;
   const zipShort = zipFull.slice(0, 5);
 
-  const symptoms = f.symptoms.value;
+  let html = '<h3>PLEASE REVIEW THIS INFORMATION</h3>';
+  html += '<table class="form">';
+  html += '<tr><th>First, MI, Last Name:</th><td>' + fname + ' ' + middle + ' ' + lname + '</td><td>' +
+    (fname && lname ? 'pass' : 'ERROR: missing name') + '</td></tr>';
+  html += '<tr><th>Date of Birth:</th><td>' + dobText + '</td><td>' + dobStatus + '</td></tr>';
+  html += '<tr><th>Email address:</th><td>' + email + '</td><td>' + (email ? 'pass' : 'ERROR: missing email') + '</td></tr>';
+  html += '<tr><th>Phone number:</th><td>' + phone + '</td><td>' + (phone ? 'pass' : 'ERROR: missing phone') + '</td></tr>';
+  html += '<tr><th>Address:</th><td>' + address + (address2 ? ', ' + address2 : '') + ', ' + city + ', ' + state + ' ' + zipShort +
+    '</td><td>' + ((address && city && state && zipFull) ? 'pass' : 'ERROR: missing address info') + '</td></tr>';
+  html += '</table>';
 
-  let gender = '(not selected)';
-  for (let i = 0; i < f.gender.length; i++) {
-    if (f.gender[i].checked) {
-      gender = f.gender[i].value;
-    }
-  }
+  return html;
+}
 
+function buildRequestedInfoSummary(f) {
   const allConditions = ['ChickenPox', 'Measles', 'Covid19', 'SmallPox', 'Tetanus'];
   const checked = document.querySelectorAll('input[name="conditions"]:checked');
   const checkedValues = [];
@@ -595,21 +599,10 @@ function buildReview() {
   const healthLevelVal = f.healthLevel.value;
   const salaryVal = formatMoney(f.salary.value);
   const homePriceVal = formatMoney(f.homeMin.value) + ' - ' + formatMoney(f.homeMax.value);
-
+  const symptoms = f.symptoms.value;
   const userid = f.userid.value.toLowerCase();
 
-  let html = '<h3>PLEASE REVIEW THIS INFORMATION</h3>';
-  html += '<table class="form">';
-  html += '<tr><th>First, MI, Last Name:</th><td>' + fname + ' ' + middle + ' ' + lname + '</td><td>' +
-    (fname && lname ? 'pass' : 'ERROR: missing name') + '</td></tr>';
-  html += '<tr><th>Date of Birth:</th><td>' + dobText + '</td><td>' + dobStatus + '</td></tr>';
-  html += '<tr><th>Email address:</th><td>' + email + '</td><td>' + (email ? 'pass' : 'ERROR: missing email') + '</td></tr>';
-  html += '<tr><th>Phone number:</th><td>' + phone + '</td><td>' + (phone ? 'pass' : 'ERROR: missing phone') + '</td></tr>';
-  html += '<tr><th>Address:</th><td>' + address + (address2 ? ', ' + address2 : '') + ', ' + city + ', ' + state + ' ' + zipShort +
-    '</td><td>' + ((address && city && state && zipFull) ? 'pass' : 'ERROR: missing address info') + '</td></tr>';
-  html += '</table>';
-
-  html += '<h3>REQUESTED INFO</h3>';
+  let html = '<h3>REQUESTED INFO</h3>';
   html += '<table class="form">';
   for (let i = 0; i < allConditions.length; i++) {
     const cond = allConditions[i];
@@ -625,6 +618,12 @@ function buildReview() {
   html += '<tr><th>Password:</th><td>********</td><td>(not displayed for security)</td></tr>';
   html += '</table>';
 
+  return html;
+}
+
+function buildReview() {
+  const f = document.regForm;
+  const html = buildContactSummary(f) + buildRequestedInfoSummary(f);
   document.getElementById('reviewArea').innerHTML = html;
 }
 
