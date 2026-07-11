@@ -117,6 +117,7 @@ function updateGreeting() {
     document.getElementById('notYouCheck').addEventListener('change', function () {
       if (this.checked) {
         deleteCookie('firstName');
+        clearFormStorage();
         document.getElementById('regForm').reset();
         greeting.textContent = 'Welcome, new user.';
         notYouContainer.innerHTML = '';
@@ -130,10 +131,77 @@ function updateGreeting() {
 document.getElementById('rememberMe').addEventListener('change', function () {
   if (!this.checked) {
     deleteCookie('firstName');
+    clearFormStorage();
   }
 });
 
 window.addEventListener('load', updateGreeting);
+
+/* ----- Fetch API: load state dropdown options from external file ----- */
+
+async function loadStateOptions() {
+  const select = document.getElementById('state');
+  try {
+    const response = await fetch('states-options.html');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const optionsHtml = await response.text();
+    select.innerHTML = '<option value="">Select State</option>' + optionsHtml;
+  } catch (error) {
+    console.error('Error loading states:', error);
+    select.innerHTML = '<option value="">Select State</option><option value="TX">Texas</option>';
+  }
+}
+
+window.addEventListener('load', loadStateOptions);
+
+/* ----- Local Storage: save and restore non-secure form fields ----- */
+
+const FORM_STORAGE_KEY = 'patientFormData';
+
+function saveFieldToStorage(fieldId) {
+  const rememberMe = document.getElementById('rememberMe');
+  if (!rememberMe.checked) {
+    return;
+  }
+  let raw = localStorage.getItem(FORM_STORAGE_KEY);
+  let data = {};
+  if (raw) {
+    data = JSON.parse(raw);
+  }
+  data[fieldId] = document.getElementById(fieldId).value;
+  localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(data));
+}
+
+function restoreFormFromStorage() {
+  const raw = localStorage.getItem(FORM_STORAGE_KEY);
+  if (!raw) {
+    return;
+  }
+  const data = JSON.parse(raw);
+  const fieldIds = ['lname', 'middle', 'phone', 'email', 'address', 'address2', 'city', 'zip', 'symptoms', 'userid'];
+  for (let i = 0; i < fieldIds.length; i++) {
+    const id = fieldIds[i];
+    if (data[id]) {
+      document.getElementById(id).value = data[id];
+    }
+  }
+}
+
+function clearFormStorage() {
+  localStorage.removeItem(FORM_STORAGE_KEY);
+}
+
+const storageFieldIds = ['lname', 'middle', 'phone', 'email', 'address', 'address2', 'city', 'zip', 'symptoms', 'userid'];
+for (let i = 0; i < storageFieldIds.length; i++) {
+  const id = storageFieldIds[i];
+  document.getElementById(id).addEventListener('blur', function () {
+    saveFieldToStorage(id);
+  });
+}
+
+window.addEventListener('load', restoreFormFromStorage);
 
 function validateFname() {
   const v = document.getElementById('fname').value;
@@ -469,6 +537,7 @@ function resetErrors() {
     errorSpans[i].innerHTML = '';
   }
   document.getElementById('submitBtn').disabled = true;
+  clearFormStorage();
 }
 
 document.getElementById('submitBtn').disabled = true;
